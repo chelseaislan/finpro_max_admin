@@ -19,16 +19,25 @@ class CompleteProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: primary1,
-      appBar: AppBarSideButton(
-        appBarTitle: const Text("Complete your Admin Profile"),
-        appBarColor: primary1,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [primary4, primary5],
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+        ),
       ),
-      body: BlocProvider<CompleteProfileBloc>(
-        create: (context) =>
-            CompleteProfileBloc(adminRepository: _adminRepository),
-        child: CompleteProfileForm(adminRepository: _adminRepository),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: const AppBarSideButton(
+          appBarTitle: Text("Complete your Admin Profile"),
+          appBarColor: Colors.transparent,
+        ),
+        body: BlocProvider<CompleteProfileBloc>(
+          create: (context) =>
+              CompleteProfileBloc(adminRepository: _adminRepository),
+          child: CompleteProfileForm(adminRepository: _adminRepository),
+        ),
       ),
     );
   }

@@ -1,6 +1,7 @@
 // @dart=2.9
 import 'dart:io';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:finpro_max_admin/bloc/authentication/authentication_bloc.dart';
 import 'package:finpro_max_admin/bloc/authentication/authentication_event.dart';
@@ -8,13 +9,15 @@ import 'package:finpro_max_admin/bloc/complete_profile/complete_profile_bloc.dar
 import 'package:finpro_max_admin/bloc/complete_profile/complete_profile_event.dart';
 import 'package:finpro_max_admin/bloc/complete_profile/complete_profile_state.dart';
 import 'package:finpro_max_admin/custom_widgets/buttons/big_wide_button.dart';
+import 'package:finpro_max_admin/custom_widgets/modal_popup.dart';
+import 'package:finpro_max_admin/custom_widgets/my_snackbar.dart';
 import 'package:finpro_max_admin/custom_widgets/text_radio_field.dart';
 import 'package:finpro_max_admin/custom_widgets/text_styles.dart';
 import 'package:finpro_max_admin/models/colors.dart';
 import 'package:finpro_max_admin/repositories/admin_repository.dart';
+import 'package:finpro_max_admin/ui/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 // START OF PROFILE SETUP 05 19/41 //
 class CompleteProfileForm extends StatefulWidget {
@@ -30,7 +33,9 @@ class CompleteProfileForm extends StatefulWidget {
 }
 
 // total 33 properties
-class _CompleteProfileFormState extends State<CompleteProfileForm> {
+class _CompleteProfileFormState extends State<CompleteProfileForm>
+    with TickerProviderStateMixin {
+  AnimationController _animationController;
   final TextEditingController _nameAdminController = TextEditingController();
   final TextEditingController _jobPositionAdminController =
       TextEditingController();
@@ -60,15 +65,17 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
 
   @override
   void initState() {
-    // implement initState
     _completeProfileBloc = BlocProvider.of<CompleteProfileBloc>(context);
     super.initState();
+    _animationController = BottomSheet.createAnimationController(this);
+    _animationController.duration = const Duration(seconds: 0);
   }
 
   @override
   void dispose() {
     _nameAdminController.dispose();
     _jobPositionAdminController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -93,41 +100,34 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
     return BlocListener<CompleteProfileBloc, CompleteProfileState>(
       listener: (context, state) {
         if (state.isFailure) {
-          print("Complete Admin Profile Failed");
-          Scaffold.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text("Error completing your profile."),
-                    Icon(Icons.error),
-                  ],
-                ),
-              ),
-            );
+          debugPrint("Complete Profile Failed");
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackbar(
+              text: "Failed to complete profile. (404)",
+              duration: 3,
+              background: primary2,
+            ),
+          );
         }
         if (state.isSubmitting) {
-          print("Completing Profile");
-          Scaffold.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                duration: const Duration(seconds: 35),
-                content: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    HeaderFourText(text: "Completing profile...", color: white),
-                    CircularProgressIndicator(color: white),
-                  ],
-                ),
-              ),
-            );
+          debugPrint("Completing Profile");
+          ScaffoldMessenger.of(context).showSnackBar(
+            myLoadingSnackbar(
+              text: "Completing profile...",
+              duration: 10,
+              background: primaryBlack,
+            ),
+          );
         }
         if (state.isSuccess) {
-          print("Success!");
-          Fluttertoast.showToast(msg: "Profile has been completed!");
+          debugPrint("Success!");
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackbar(
+              text: "Profile has been completed!",
+              duration: 3,
+              background: primaryBlack,
+            ),
+          );
           BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
         }
       },
@@ -137,7 +137,6 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   GestureDetector(
                     child: Container(
@@ -172,20 +171,36 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
                             ),
                     ),
                     onTap: () async {
-                      // File getAvatar =
-                      //     await FilePicker.getFile(type: FileType.image);
-                      // if (getAvatar != null) {
-                      //   setState(() {
-                      //     photoAdmin = getAvatar;
-                      //   });
-                      // }
-                      FilePickerResult getAvatar = await FilePicker.platform
-                          .pickFiles(type: FileType.image);
-                      if (getAvatar != null) {
-                        File file = File(getAvatar.files.single.path);
-                        setState(() {
-                          photoAdmin = file;
-                        });
+                      try {
+                        FilePickerResult getAvatar = await FilePicker.platform
+                            .pickFiles(type: FileType.image);
+                        if (getAvatar != null) {
+                          File file = File(getAvatar.files.single.path);
+                          setState(() {
+                            photoAdmin = file;
+                          });
+                        }
+                      } catch (e) {
+                        showModalBottomSheet(
+                          transitionAnimationController: _animationController,
+                          context: context,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10),
+                            ),
+                          ),
+                          builder: (context) {
+                            return ModalPopupOneButton(
+                              size: size,
+                              title: "Storage Permission Denied",
+                              image: "assets/images/empty-container.png",
+                              description:
+                                  "To upload pictures and documents, please enable permission to read external storage.",
+                              onPressed: () => AppSettings.openAppSettings(),
+                            );
+                          },
+                        );
                       }
                     },
                   ),
@@ -208,18 +223,65 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
                     },
                   ),
                   const SizedBox(height: 10),
-                  SizedBox(
-                    width: size.width,
-                    child: BigWideButton(
-                      labelText: "Complete Profile",
-                      onPressedTo:
-                          isCompleteButtonEnabled(state) ? _onSubmitted : null,
-                      textColor:
-                          isCompleteButtonEnabled(state) ? secondBlack : white,
-                      btnColor: isCompleteButtonEnabled(state)
-                          ? Colors.amber
-                          : Colors.black54,
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      BigWideButton(
+                        labelText: "Complete Profile",
+                        onPressedTo: isCompleteButtonEnabled(state)
+                            ? _onSubmitted
+                            : null,
+                        textColor: isCompleteButtonEnabled(state)
+                            ? secondBlack
+                            : white,
+                        btnColor: isCompleteButtonEnabled(state)
+                            ? Colors.amber
+                            : Colors.black54,
+                      ),
+                      const SizedBox(height: 10),
+                      BigWideButton(
+                        labelText: "Log Out",
+                        onPressedTo: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text("Confirmation"),
+                              content: const Text(
+                                  "Are you sure you want to log out?"),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text("Cancel"),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    BlocProvider.of<AuthenticationBloc>(context)
+                                        .add(LoggedOut());
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      PageRouteBuilder(
+                                        pageBuilder: (context, animation1,
+                                                animation2) =>
+                                            Home(
+                                                adminRepository:
+                                                    widget._adminRepository),
+                                        transitionDuration: Duration.zero,
+                                        reverseTransitionDuration:
+                                            Duration.zero,
+                                      ),
+                                      (route) => false,
+                                    );
+                                  },
+                                  child: const Text("OK"),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        textColor: white,
+                        btnColor: primary2,
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 25),
                 ],

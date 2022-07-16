@@ -91,7 +91,7 @@ class _LoginTextFieldWidgetState extends State<LoginTextFieldWidget> {
                     right: 8.0),
                 isDense: true,
                 errorStyle: TextStyle(
-                  color: primary2,
+                  color: white,
                   fontSize: 12.0,
                   fontWeight: FontWeight.w500,
                   fontStyle: FontStyle.normal,

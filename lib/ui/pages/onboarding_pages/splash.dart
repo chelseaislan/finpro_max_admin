@@ -12,7 +12,7 @@ class Splash extends StatelessWidget {
         // Background gradient Splash Screen
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [primary3, primary1],
+            colors: [primary4, primary5],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),

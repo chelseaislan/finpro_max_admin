@@ -2,6 +2,7 @@
 import 'package:finpro_max_admin/bloc/authentication/authentication_bloc.dart';
 import 'package:finpro_max_admin/bloc/authentication/authentication_event.dart';
 import 'package:finpro_max_admin/bloc/login/bloc.dart';
+import 'package:finpro_max_admin/custom_widgets/my_snackbar.dart';
 import 'package:finpro_max_admin/models/colors.dart';
 import 'package:finpro_max_admin/custom_widgets/buttons/big_wide_button.dart';
 import 'package:finpro_max_admin/custom_widgets/text_radio_field.dart';
@@ -9,7 +10,6 @@ import 'package:finpro_max_admin/custom_widgets/text_styles.dart';
 import 'package:finpro_max_admin/repositories/admin_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginForm extends StatefulWidget {
   final AdminRepository _adminRepository;
@@ -30,7 +30,9 @@ class _LoginFormState extends State<LoginForm> {
   AdminRepository get _adminRepository => widget._adminRepository;
 
   bool get isPopulated =>
-      _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+      _emailController.text.isNotEmpty &&
+      _emailController.text.contains("@mm.id") &&
+      _passwordController.text.isNotEmpty;
 
   bool isLoginButtonEnabled(LoginState state) {
     return isPopulated && !state.isSubmitting;
@@ -79,31 +81,35 @@ class _LoginFormState extends State<LoginForm> {
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state.isFailure) {
-          Fluttertoast.showToast(msg: "Login Failed.");
-          Scaffold.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Login Failed"),
-                    Icon(Icons.error_rounded),
-                  ],
-                ),
-              ),
-            );
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackbar(
+              text: "Login failed, please try again. (404)",
+              duration: 3,
+              background: primary2,
+            ),
+          );
         }
 
         if (state.isSubmitting) {
-          print("isSubmitting");
-          Fluttertoast.showToast(
-              msg: "Logging in...", toastLength: Toast.LENGTH_LONG);
+          debugPrint("isSubmitting");
+          ScaffoldMessenger.of(context).showSnackBar(
+            myLoadingSnackbar(
+              text: "Logging in...",
+              duration: 3,
+              background: primaryBlack,
+            ),
+          );
         }
 
         if (state.isSuccess) {
-          print("Success!");
-          Fluttertoast.showToast(msg: "Login Successful!");
+          debugPrint("Success!");
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackbar(
+              text: "Login successful!",
+              duration: 3,
+              background: primaryBlack,
+            ),
+          );
           BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
         }
       },
@@ -152,7 +158,9 @@ class _LoginFormState extends State<LoginForm> {
                     prefixIcon: Icon(Icons.email_outlined),
                     textInputType: TextInputType.emailAddress,
                     textValidator: (_) {
-                      return !state.isEmailValid ? "Invalid Email" : null;
+                      return !state.isEmailValid
+                          ? "Email must end with '@mm.id'."
+                          : null;
                     },
                   ),
                   LoginTextFieldWidget(
@@ -161,7 +169,7 @@ class _LoginFormState extends State<LoginForm> {
                     controller: _passwordController,
                     color: white,
                     obscureText: true,
-                    prefixIcon: Icon(Icons.vpn_key_outlined),
+                    prefixIcon: const Icon(Icons.vpn_key_outlined),
                     textInputType: TextInputType.visiblePassword,
                     textValidator: (_) {
                       return !state.isPasswordValid ? "Invalid Password" : null;

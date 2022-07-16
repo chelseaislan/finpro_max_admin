@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:finpro_max_admin/repositories/admin_repository.dart';
 import 'package:finpro_max_admin/ui/validators.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:meta/meta.dart';
 import './bloc.dart';
 import 'package:rxdart/rxdart.dart';
@@ -69,8 +68,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       await _adminRepository.signInWithEmail(email, password);
       yield LoginState.success();
     } catch (e) {
-      LoginState.failure();
-      Fluttertoast.showToast(msg: e.toString(), toastLength: Toast.LENGTH_LONG);
+      yield LoginState.failure();
     }
   }
 }

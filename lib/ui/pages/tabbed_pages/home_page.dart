@@ -7,7 +7,6 @@ import 'package:finpro_max_admin/custom_widgets/text_styles.dart';
 import 'package:finpro_max_admin/models/colors.dart';
 import 'package:finpro_max_admin/ui/widgets/tabs.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class HomePage extends StatelessWidget {
   final String adminId;
