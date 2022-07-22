@@ -2,6 +2,7 @@
 import 'package:finpro_max_admin/models/colors.dart';
 import 'package:finpro_max_admin/ui/pages/tabbed_pages/home_page.dart';
 import 'package:finpro_max_admin/ui/pages/tabbed_pages/profile_page.dart';
+import 'package:finpro_max_admin/ui/pages/tabbed_pages/statistics_page.dart';
 import 'package:flutter/material.dart';
 
 class HomeTabs extends StatelessWidget {
@@ -13,12 +14,13 @@ class HomeTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> pages = [
       HomePage(adminId: adminId),
+      StatisticsPage(),
       ProfilePage(adminId: adminId),
     ];
     return DefaultTabController(
       initialIndex: selectedPage,
       animationDuration: Duration.zero,
-      length: 2,
+      length: pages.length,
       child: Scaffold(
         body: TabBarView(
           children: pages,
@@ -49,6 +51,10 @@ class HomeTabs extends StatelessWidget {
           Tab(
             icon: Icon(Icons.home_rounded, size: 30),
             text: "Verify Users",
+          ),
+          Tab(
+            icon: Icon(Icons.graphic_eq_outlined, size: 30),
+            text: "Statistics",
           ),
           Tab(
             icon: Icon(Icons.person_rounded, size: 30),
