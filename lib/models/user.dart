@@ -43,3 +43,14 @@ class Admin {
   Admin(
       {this.uidAdmin, this.nameAdmin, this.photoAdmin, this.jobPositionAdmin});
 }
+
+class DropdownList {
+  final List<String> provinceList = [
+    "Banten",
+    "Jabodetabek",
+    "Jawa Barat",
+    "Jawa Tengah",
+    "DIY",
+    "Jawa Timur",
+  ];
+}
