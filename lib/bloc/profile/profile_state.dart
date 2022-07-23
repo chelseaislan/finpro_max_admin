@@ -1,6 +1,6 @@
 // @dart=2.9
 import 'package:equatable/equatable.dart';
-import 'package:finpro_max_admin/models/user.dart';
+import 'package:finpro_max_admin/models/admin.dart';
 
 // Equatable compares variuos instance of states without boilerplate code
 abstract class ProfileState extends Equatable {

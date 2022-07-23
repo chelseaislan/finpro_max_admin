@@ -7,7 +7,7 @@ import 'package:finpro_max_admin/custom_widgets/buttons/settings_button.dart';
 import 'package:finpro_max_admin/custom_widgets/profile_overview.dart';
 import 'package:finpro_max_admin/custom_widgets/text_styles.dart';
 import 'package:finpro_max_admin/models/colors.dart';
-import 'package:finpro_max_admin/models/user.dart';
+import 'package:finpro_max_admin/models/admin.dart';
 import 'package:finpro_max_admin/repositories/admin_repository.dart';
 import 'package:finpro_max_admin/ui/pages/home.dart';
 import 'package:finpro_max_admin/ui/widgets/tabs.dart';

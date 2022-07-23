@@ -2,7 +2,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:finpro_max_admin/bloc/profile/bloc.dart';
-import 'package:finpro_max_admin/models/user.dart';
+import 'package:finpro_max_admin/models/admin.dart';
 import 'package:finpro_max_admin/repositories/admin_repository.dart';
 import 'package:meta/meta.dart';
 
