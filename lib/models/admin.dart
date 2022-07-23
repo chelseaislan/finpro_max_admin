@@ -19,6 +19,6 @@ class DropdownList {
     "Registered Users",
     "Verified Male Users",
     "Verified Female Users",
-    "Users with Successful Marriage",
+    "Users Married using MM",
   ];
 }

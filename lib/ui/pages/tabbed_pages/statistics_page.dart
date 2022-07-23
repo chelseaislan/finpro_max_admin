@@ -442,7 +442,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                               HeaderTwoText(
                                   text: totalNumbers[index],
                                   color: primaryBlack),
-                              ChatText(
+                              DescText(
                                 text: _dropdownList.titles[index],
                                 color: thirdBlack,
                               )
