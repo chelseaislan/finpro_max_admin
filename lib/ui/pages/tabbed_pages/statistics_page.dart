@@ -343,7 +343,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
   }
 
   void _initialize() {
-    Future<void>.delayed(const Duration(seconds: 3), () {
+    Future<void>.delayed(const Duration(seconds: 4), () {
       if (mounted) {
         // Check that the widget is still mounted
         setState(() => _initialized = true);
