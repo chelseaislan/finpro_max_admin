@@ -1,6 +1,7 @@
 // @dart=2.9
 import 'package:finpro_max_admin/models/colors.dart';
 import 'package:finpro_max_admin/ui/pages/tabbed_pages/home_page.dart';
+import 'package:finpro_max_admin/ui/pages/tabbed_pages/planner_page.dart';
 import 'package:finpro_max_admin/ui/pages/tabbed_pages/profile_page.dart';
 import 'package:finpro_max_admin/ui/pages/tabbed_pages/statistics_page.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class HomeTabs extends StatelessWidget {
     List<Widget> pages = [
       HomePage(adminId: adminId),
       StatisticsPage(),
+      PlannerPage(adminId: adminId),
       ProfilePage(adminId: adminId),
     ];
     return DefaultTabController(
@@ -55,6 +57,10 @@ class HomeTabs extends StatelessWidget {
           Tab(
             icon: Icon(Icons.graphic_eq_outlined, size: 30),
             text: "Statistics",
+          ),
+          Tab(
+            icon: Icon(Icons.place_outlined, size: 30),
+            text: "Planners",
           ),
           Tab(
             icon: Icon(Icons.person_rounded, size: 30),
