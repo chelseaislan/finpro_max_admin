@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finpro_max_admin/bloc/planner/bloc.dart';
 import 'package:finpro_max_admin/custom_widgets/buttons/appbar_sidebutton.dart';
 import 'package:finpro_max_admin/custom_widgets/buttons/big_wide_button.dart';
+import 'package:finpro_max_admin/custom_widgets/buttons/text_button.dart';
 import 'package:finpro_max_admin/custom_widgets/divider.dart';
 import 'package:finpro_max_admin/custom_widgets/empty_content.dart';
 import 'package:finpro_max_admin/custom_widgets/text_radio_field.dart';
@@ -26,7 +27,7 @@ class PlannerPage extends StatefulWidget {
 
 class _PlannerPageState extends State<PlannerPage>
     with TickerProviderStateMixin {
-  PlannerRepository _plannerRepository = PlannerRepository();
+  final PlannerRepository _plannerRepository = PlannerRepository();
   AnimationController _animationController;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descController = TextEditingController();
@@ -361,27 +362,47 @@ class _PlannerPageState extends State<PlannerPage>
                           },
                         ),
                         PaddingDivider(color: white),
-                        BigWideButton(
-                          labelText: "Add Planner",
-                          textColor: primaryBlack,
-                          btnColor: gold,
-                          onPressedTo: () {
-                            _plannerBloc.add(
-                              UploadPlannerEvent(
-                                plannerDetail: PlannerDetail(
-                                  adminId: widget.adminId,
-                                  plannerTitle: _titleController.text,
-                                  plannerDesc: _descController.text,
-                                  plannerWebsite: _websiteController.text,
-                                  plannerPhone: _phoneController.text,
-                                  plannerMapUrl: _mapUrlController.text,
-                                  plannerLocation: _locationController.text,
-                                  province: _provinceController.text,
-                                ),
-                              ),
-                            );
-                            Navigator.pop(context);
-                          },
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            BigTextButton(
+                              labelText: "Clear Filled Data",
+                              onPressedTo: () {
+                                setState(() {
+                                  _titleController.clear();
+                                  _descController.clear();
+                                  _websiteController.clear();
+                                  _phoneController.clear();
+                                  _mapUrlController.clear();
+                                  _locationController.clear();
+                                  _provinceController.clear();
+                                });
+                              },
+                              labelColor: white,
+                            ),
+                            BigWideButton(
+                              labelText: "Add Planner",
+                              textColor: primaryBlack,
+                              btnColor: gold,
+                              onPressedTo: () {
+                                _plannerBloc.add(
+                                  UploadPlannerEvent(
+                                    plannerDetail: PlannerDetail(
+                                      adminId: widget.adminId,
+                                      plannerTitle: _titleController.text,
+                                      plannerDesc: _descController.text,
+                                      plannerWebsite: _websiteController.text,
+                                      plannerPhone: _phoneController.text,
+                                      plannerMapUrl: _mapUrlController.text,
+                                      plannerLocation: _locationController.text,
+                                      province: _provinceController.text,
+                                    ),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 20),
                       ],
